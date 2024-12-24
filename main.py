@@ -6,8 +6,9 @@ import time
 app = Flask(__name__)
 
 words = [
-    "python", "programming", "keyboard", "computer", "algorithm",
-    "developer", "typing", "practice", "software", "coding"
+    "cat", "dog", "elephant", "giraffe", "penguin",
+    "tiger", "lion", "panda", "koala", "dolphin",
+    "kangaroo", "zebra", "monkey", "rabbit", "bear"
 ]
 
 def get_random_word():
