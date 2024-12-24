@@ -21,11 +21,44 @@ def home():
     <head>
         <title>タイピングゲーム</title>
         <style>
-            body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-            #word { font-size: 24px; margin: 20px; }
-            #input { font-size: 18px; padding: 5px; }
-            #score { margin: 20px; }
-            #speed { margin: 20px; }
+            @keyframes gradient {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            body { 
+                font-family: Arial, sans-serif; 
+                text-align: center; 
+                margin: 0; 
+                padding-top: 50px; 
+                min-height: 100vh;
+                background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+                background-size: 400% 400%;
+                animation: gradient 15s ease infinite;
+                color: white;
+            }
+            #word { 
+                font-size: 32px; 
+                margin: 20px;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            }
+            #input { 
+                font-size: 18px; 
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                width: 300px;
+                margin: 20px;
+            }
+            #score, #speed { 
+                margin: 20px;
+                font-size: 20px;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            }
+            h1 {
+                color: white;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            }
         </style>
     </head>
     <body>
