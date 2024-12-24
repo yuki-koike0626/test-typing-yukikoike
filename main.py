@@ -1,8 +1,10 @@
 
+from flask import Flask, render_template_string, request, jsonify
 import random
 import time
 
-# タイピング用の単語リスト
+app = Flask(__name__)
+
 words = [
     "python", "programming", "keyboard", "computer", "algorithm",
     "developer", "typing", "practice", "software", "coding"
@@ -11,32 +13,70 @@ words = [
 def get_random_word():
     return random.choice(words)
 
-def typing_game():
-    score = 0
-    print("タイピングゲームを開始します！")
-    print("'q'を入力すると終了します。\n")
-    
-    while True:
-        target_word = get_random_word()
-        print(f"この単語をタイプしてください: {target_word}")
-        start_time = time.time()
-        
-        user_input = input("> ")
-        
-        if user_input.lower() == 'q':
-            break
-            
-        if user_input == target_word:
-            elapsed_time = time.time() - start_time
-            words_per_minute = (len(target_word) / 5) / (elapsed_time / 60)
-            score += 1
-            print(f"正解！ タイピング速度: {words_per_minute:.1f} WPM")
-        else:
-            print("不正解！ もう一度試してください。")
-        
-        print(f"現在のスコア: {score}\n")
-    
-    print(f"\nゲーム終了！ 最終スコア: {score}")
+@app.route('/')
+def home():
+    html = '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>タイピングゲーム</title>
+        <style>
+            body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+            #word { font-size: 24px; margin: 20px; }
+            #input { font-size: 18px; padding: 5px; }
+            #score { margin: 20px; }
+            #speed { margin: 20px; }
+        </style>
+    </head>
+    <body>
+        <h1>タイピングゲーム</h1>
+        <div id="word"></div>
+        <input type="text" id="input" placeholder="ここにタイプしてください">
+        <div id="score">スコア: 0</div>
+        <div id="speed"></div>
 
-if __name__ == "__main__":
-    typing_game()
+        <script>
+            let score = 0;
+            let startTime;
+
+            function getNewWord() {
+                fetch('/word')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('word').textContent = data.word;
+                        startTime = new Date();
+                    });
+            }
+
+            document.getElementById('input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const input = this.value;
+                    const word = document.getElementById('word').textContent;
+                    const endTime = new Date();
+                    const timeElapsed = (endTime - startTime) / 1000;
+                    
+                    if (input === word) {
+                        score++;
+                        const wpm = (word.length / 5) / (timeElapsed / 60);
+                        document.getElementById('speed').textContent = `タイピング速度: ${wpm.toFixed(1)} WPM`;
+                    }
+                    
+                    document.getElementById('score').textContent = `スコア: ${score}`;
+                    this.value = '';
+                    getNewWord();
+                }
+            });
+
+            getNewWord();
+        </script>
+    </body>
+    </html>
+    '''
+    return render_template_string(html)
+
+@app.route('/word')
+def new_word():
+    return jsonify({'word': get_random_word()})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=3000)
